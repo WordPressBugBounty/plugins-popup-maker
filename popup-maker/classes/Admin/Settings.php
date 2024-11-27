@@ -576,17 +576,6 @@ class PUM_Admin_Settings {
 
 		$user_styles = PUM_AssetCache::generate_font_imports() . PUM_AssetCache::generate_popup_theme_styles() . PUM_AssetCache::generate_popup_styles();
 
-		// Prevent both raw and HTML-encoded variations of textarea tag
-		// This regex prevents both HTML and HTML-encoded textarea tags:
-		// (<\/?\s*|&lt;\/?\s*) - Matches either < or &lt; optionally followed by /, with optional whitespace
-		// t\s*e\s*x\s*t\s*a\s*r\s*e\s*a\b - Matches "textarea" with optional whitespace between letters
-		// /i flag makes it case-insensitive
-		$safe_user_styles = preg_replace(
-			'/(<\/?\s*|&lt;\/?\s*)t\s*e\s*x\s*t\s*a\s*r\s*e\s*a\b/i',
-			'',
-			$user_styles
-		);
-
 		ob_start();
 
 		?>
@@ -596,10 +585,11 @@ class PUM_Admin_Settings {
 		<div id="pum_style_output" style="display:none;">
 			<label for="pum_core_styles"><?php esc_html_e( 'Core Styles', 'popup-maker' ); ?></label> <br />
 
-			<textarea id="pum_core_styles" wrap="off" style="white-space: pre; width: 100%; min-height: 200px;" readonly="readonly">
+			<textarea id="pum_core_styles" wrap="off" style="white-space: pre; width: 100%;" readonly="readonly">
 				<?php
 				// Ignored because this is generated CSS.
-				echo esc_html( $core_styles );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo $core_styles;
 				?>
 			</textarea>
 
@@ -609,7 +599,9 @@ class PUM_Admin_Settings {
 
 			<textarea id="pum_generated_styles" wrap="off" style="white-space: pre; width: 100%; min-height: 200px;" readonly="readonly">
 				<?php
-				echo esc_html( $safe_user_styles );
+				// Ignored because this is generated CSS.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo $user_styles;
 				?>
 			</textarea>
 		</div>

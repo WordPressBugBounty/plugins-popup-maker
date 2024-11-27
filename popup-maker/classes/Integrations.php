@@ -49,7 +49,6 @@ class PUM_Integrations {
 				// Builders.
 				'kingcomposer'    => new PUM_Integration_Builder_KingComposer(),
 				'visualcomposer'  => new PUM_Integration_Builder_VisualComposer(),
-				// 'bricks'          => new PUM_Integration_Builder_Bricks(),
 			]
 		);
 
