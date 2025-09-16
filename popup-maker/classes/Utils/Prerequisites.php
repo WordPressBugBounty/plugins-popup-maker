@@ -16,34 +16,31 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Cache accessible across instances.
 	 *
-	 * @var array{
-	 *     get_plugin_data?: array<string, array{Name?: string, Version?: string}>
-	 * }
+	 * @var array
 	 */
 	public static $cache = [];
 
 	/**
 	 * Array of checks to perform.
 	 *
-	 * @var array<int, array<string, mixed>>
+	 * @var array
 	 */
 	protected $checks = [];
 
 	/**
 	 * Array of detected failures.
 	 *
-	 * @var array<int, array<string, mixed>>
+	 * @var array
 	 */
 	protected $failures = [];
 
 	/**
 	 * Instantiate prerequisite checker.
 	 *
-	 * @param array<int, array<string, mixed>> $requirements Array of requirements.
+	 * @param array $requirements Array of requirements.
 	 */
 	public function __construct( $requirements = [] ) {
 		foreach ( $requirements as $arguments ) {
-			/** @var array{type: string, version?: string, slug?: string, name?: string, check_installed?: bool, dep_label?: string} $arguments */
 			switch ( $arguments['type'] ) {
 				case 'php':
 					$this->checks[] = wp_parse_args(
@@ -76,7 +73,7 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Check requirements.
 	 *
-	 * @param bool $return_on_fail Whether it should stop processing if one fails.
+	 * @param boolean $return_on_fail Whether it should stop processing if one fails.
 	 *
 	 * @return bool
 	 */
@@ -84,7 +81,6 @@ class PUM_Utils_Prerequisites {
 		$end_result = true;
 
 		foreach ( $this->checks as $check ) {
-			/** @var array<string, mixed> $check */
 			$result = $this->check_handler( $check );
 
 			if ( false === $result ) {
@@ -101,8 +97,6 @@ class PUM_Utils_Prerequisites {
 
 	/**
 	 * Render notices when appropriate.
-	 *
-	 * @return void
 	 */
 	public function setup_notices() {
 		add_action( 'admin_notices', [ $this, 'render_notices' ] );
@@ -111,7 +105,7 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Handle individual checks by mapping them to methods.
 	 *
-	 * @param array<string, mixed> $check Requirement check arguments.
+	 * @param array $check Requirement check arguments.
 	 *
 	 * @return bool
 	 */
@@ -122,9 +116,7 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Report failure notice to the queue.
 	 *
-	 * @param array<string, mixed> $check_args Array of check arguments.
-	 *
-	 * @return void
+	 * @param array $check_args Array of check arguments.
 	 */
 	public function report_failure( $check_args ) {
 		$this->failures[] = $check_args;
@@ -133,7 +125,7 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Get a list of failures.
 	 *
-	 * @return array<int, array<string, mixed>>
+	 * @return array
 	 */
 	public function get_failures() {
 		return $this->failures;
@@ -142,14 +134,12 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Check PHP version against args.
 	 *
-	 * @param array<string, mixed> $check_args Array of args containing version requirement.
+	 * @param array $check_args Array of args.
 	 *
 	 * @return bool
 	 */
 	public function check_php( $check_args ) {
-		/** @var string $version */
-		$version = $check_args['version'];
-		if ( false === version_compare( phpversion(), $version, '>=' ) ) {
+		if ( false === version_compare( phpversion(), $check_args['version'], '>=' ) ) {
 			$this->report_failure( $check_args );
 			return false;
 		}
@@ -160,14 +150,12 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Check plugin requirements.
 	 *
-	 * @param array<string, mixed> $check_args Array of args containing plugin requirements.
+	 * @param array $check_args Array of args.
 	 *
 	 * @return bool
 	 */
 	public function check_plugin( $check_args ) {
-		/** @var string $slug */
-		$slug   = $check_args['slug'];
-		$active = $this->plugin_is_active( $slug );
+		$active = $this->plugin_is_active( $check_args['slug'] );
 
 		/**
 		 * The following checks are performed in this order for performance reasons.
@@ -182,12 +170,10 @@ class PUM_Utils_Prerequisites {
 		if ( true === $active ) {
 			// If required version is set & plugin is active, check that first.
 			if ( isset( $check_args['version'] ) ) {
-				/** @var string $required_version */
-				$required_version = $check_args['version'];
-				$version          = $this->get_plugin_data( $slug, 'Version' );
+				$version = $this->get_plugin_data( $check_args['slug'], 'Version' );
 
 				// If its higher than the required version, we can bail now > true.
-				if ( version_compare( $version, $required_version, '>=' ) ) {
+				if ( version_compare( $version, $check_args['version'], '>=' ) ) {
 					return true;
 				} else {
 					// If not updated, report the failure and bail > false.
@@ -208,13 +194,9 @@ class PUM_Utils_Prerequisites {
 			}
 		}
 
-		/** @var bool $check_installed */
-		$check_installed = $check_args['check_installed'];
-		if ( $check_installed ) {
+		if ( $check_args['check_installed'] ) {
 			// Check if installed, if so the plugin is not activated.
-			/** @var string $name */
-			$name = $check_args['name'];
-			if ( $name === $this->get_plugin_data( $slug, 'Name' ) ) {
+			if ( $check_args['name'] === $this->get_plugin_data( $check_args['slug'], 'Name' ) ) {
 				$this->report_failure(
 					array_merge(
 						$check_args,
@@ -243,9 +225,9 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Internally cached get_plugin_data/get_file_data wrapper.
 	 *
-	 * @param string      $slug Plugins `folder/file.php` slug.
-	 * @param string|null $header Specific plugin header needed.
-	 * @return ($header is null ? array<string, string> : string|null)
+	 * @param string $slug Plugins `folder/file.php` slug.
+	 * @param string $header Specific plugin header needed.
+	 * @return mixed
 	 */
 	private function get_plugin_data( $slug, $header = null ) {
 		if ( ! isset( static::$cache['get_plugin_data'][ $slug ] ) ) {
@@ -278,7 +260,6 @@ class PUM_Utils_Prerequisites {
 	 * @return bool
 	 */
 	protected function plugin_is_active( $slug ) {
-		/** @var string[] $active_plugins */
 		$active_plugins = get_option( 'active_plugins', [] );
 
 		return in_array( $slug, $active_plugins, true );
@@ -288,35 +269,30 @@ class PUM_Utils_Prerequisites {
 	/**
 	 * Get php error message.
 	 *
-	 * @param array<string, mixed> $failed_check_args Check arguments containing version requirement.
+	 * @param array $failed_check_args Check arguments.
 	 *
 	 * @return string
 	 */
 	public function get_php_message( $failed_check_args ) {
 		/* translators: 1. PHP Version */
 		$message = __( 'This plugin requires <b>PHP %s</b> or higher in order to run.', 'popup-maker' );
-		/** @var string $version */
-		$version = $failed_check_args['version'];
-		return sprintf( $message, $version );
+		return sprintf( $message, $failed_check_args['version'] );
 	}
 
 	/**
 	 * Get plugin error message.
 	 *
-	 * @param array<string, mixed> $failed_check_args Plugin failure check arguments.
+	 * @param array $failed_check_args Get helpful error message.
 	 *
 	 * @return string
 	 */
 	public function get_plugin_message( $failed_check_args ) {
-		/** @var string $slug */
 		$slug = $failed_check_args['slug'];
 		// Without file path.
 		$short_slug = explode( '/', $slug );
 		$short_slug = $short_slug[0];
-		/** @var string $name */
-		$name = $failed_check_args['name'];
-		/** @var string $dep_label */
-		$dep_label = $failed_check_args['dep_label'];
+		$name       = $failed_check_args['name'];
+		$dep_label  = $failed_check_args['dep_label'];
 
 		if ( isset( $failed_check_args['not_activated'] ) ) {
 			$url  = esc_url( wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $slug ), 'activate-plugin_' . $slug ) );
@@ -338,7 +314,7 @@ class PUM_Utils_Prerequisites {
 				__( 'The plugin "%1$s" requires %2$s v%3$s or higher! Please %4$s to continue!', 'popup-maker' ),
 				$dep_label,
 				'<strong>' . $name . '</strong>',
-				'<strong>' . ( $failed_check_args['version'] ?? '' ) . '</strong>',
+				'<strong>' . $failed_check_args['version'] . '</strong>',
 				$link
 			);
 		} else {
@@ -364,7 +340,6 @@ class PUM_Utils_Prerequisites {
 	 */
 	public function render_notices() {
 		foreach ( $this->failures as $failure ) {
-			/** @var array{type: string} $failure */
 			$class   = 'notice notice-error';
 			$message = method_exists( $this, 'get_' . $failure['type'] . '_message' ) ? $this->{'get_' . $failure['type'] . '_message'}( $failure ) : false;
 

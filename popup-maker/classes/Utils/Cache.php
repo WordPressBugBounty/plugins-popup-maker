@@ -40,25 +40,21 @@ class PUM_Utils_Cache {
 	}
 
 	/**
-	 * Get cache timeout for a key
+	 * @param        $key
+	 * @param string $group
 	 *
-	 * @param string|int $key Cache key
-	 * @param string     $group Cache group
-	 *
-	 * @return int Cache timeout in seconds
+	 * @return mixed
 	 */
 	public static function get_timeout( $key, $group = '' ) {
 		return apply_filters( 'pum_cache_timeout', pum_cache_timeout( $group ), $key, $group );
 	}
 
 	/**
-	 * Add data to cache (only if key doesn't exist)
+	 * @param        $key
+	 * @param        $data
+	 * @param string $group
 	 *
-	 * @param string|int $key Cache key
-	 * @param mixed      $data Data to cache (any serializable value)
-	 * @param string     $group Cache group
-	 *
-	 * @return bool True on success, false on failure
+	 * @return bool
 	 */
 	public static function add( $key, $data, $group = '' ) {
 		if ( ! self::enabled() ) {
@@ -69,13 +65,11 @@ class PUM_Utils_Cache {
 	}
 
 	/**
-	 * Replace data in cache (only if key exists)
+	 * @param        $key
+	 * @param        $data
+	 * @param string $group
 	 *
-	 * @param string|int $key Cache key
-	 * @param mixed      $data Data to cache (any serializable value)
-	 * @param string     $group Cache group
-	 *
-	 * @return bool True on success, false on failure
+	 * @return bool
 	 */
 	public static function replace( $key, $data, $group = '' ) {
 		if ( ! self::enabled() ) {
@@ -86,13 +80,11 @@ class PUM_Utils_Cache {
 	}
 
 	/**
-	 * Set data in cache (create or update)
+	 * @param        $key
+	 * @param        $data
+	 * @param string $group
 	 *
-	 * @param string|int $key Cache key
-	 * @param mixed      $data Data to cache (any serializable value)
-	 * @param string     $group Cache group
-	 *
-	 * @return bool True on success, false on failure
+	 * @return bool
 	 */
 	public static function set( $key, $data, $group = '' ) {
 		if ( ! self::enabled() ) {
@@ -103,14 +95,12 @@ class PUM_Utils_Cache {
 	}
 
 	/**
-	 * Get data from cache
+	 * @param        $key
+	 * @param string $group
+	 * @param bool   $force
+	 * @param null   $found
 	 *
-	 * @param string|int $key Cache key
-	 * @param string     $group Cache group
-	 * @param bool       $force Force refresh from persistent cache
-	 * @param-out bool|null $found Whether the key was found in cache
-	 *
-	 * @return mixed|false Cache data on success, false on failure or cache disabled
+	 * @return bool|mixed
 	 */
 	public static function get( $key, $group = '', $force = false, &$found = null ) {
 		if ( ! self::enabled() ) {
@@ -121,12 +111,10 @@ class PUM_Utils_Cache {
 	}
 
 	/**
-	 * Delete data from cache
+	 * @param        $key
+	 * @param string $group
 	 *
-	 * @param string|int $key Cache key
-	 * @param string     $group Cache group
-	 *
-	 * @return bool True on success, false on failure
+	 * @return bool
 	 */
 	public static function delete( $key, $group = '' ) {
 		if ( ! self::enabled() ) {
@@ -156,13 +144,11 @@ class PUM_Utils_Cache {
 
 
 	/**
-	 * Increment numeric cache value
+	 * @param        $key
+	 * @param int    $offset
+	 * @param string $group
 	 *
-	 * @param string|int $key Cache key
-	 * @param int        $offset Amount to increment
-	 * @param string     $group Cache group
-	 *
-	 * @return int|bool New value on success, false on failure, true when cache disabled
+	 * @return bool|false|int
 	 */
 	public static function incr( $key, $offset = 1, $group = '' ) {
 		if ( ! self::enabled() ) {
@@ -173,13 +159,11 @@ class PUM_Utils_Cache {
 	}
 
 	/**
-	 * Decrement numeric cache value
+	 * @param        $key
+	 * @param int    $offset
+	 * @param string $group
 	 *
-	 * @param string|int $key Cache key
-	 * @param int        $offset Amount to decrement
-	 * @param string     $group Cache group
-	 *
-	 * @return int|bool New value on success, false on failure, true when cache disabled
+	 * @return bool|false|int
 	 */
 	public static function decr( $key, $offset = 1, $group = '' ) {
 		if ( ! self::enabled() ) {

@@ -40,10 +40,10 @@ function pum_popup_content( $popup_id = null ) {
 		return;
 	}
 
-	$cached_content = \PopupMaker\plugin()->get_controller( 'Frontend\Popups' )->get_content_cache( $popup->ID );
+	$cached_content = PUM_Site_Popups::get_cache_content( $popup->ID );
 
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	echo null !== $cached_content ? $cached_content : $popup->get_content();
+	echo false !== $cached_content ? $cached_content : $popup->get_content();
 }
 
 /**

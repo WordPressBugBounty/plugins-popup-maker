@@ -31,12 +31,6 @@ class PUM_Admin_Extend {
 	 * Renders the support page contents.
 	 */
 	public static function page() {
-		$upgrade_link = \PopupMaker\get_upgrade_link( [
-			'utm_source'   => 'plugin-extension-page',
-			'utm_medium'   => 'text-link',
-			'utm_campaign' => 'upsell',
-			'utm_content'  => 'hero-cta',
-		] );
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Upgrade', 'popup-maker' ); ?></h1>
@@ -51,7 +45,7 @@ class PUM_Admin_Extend {
 						<li>Conditions - Show popups to visitors from a certain site, from search engines, using certain browsers, who has viewed X pages, and more </li>
 						<li>And much more!</li>
 					</ul>
-					<a href="<?php echo esc_url( $upgrade_link ); ?>" class="button button-primary" target="_blank" rel="noreferrer noopener">View pricing</a>
+					<a href="https://wppopupmaker.com/pricing/?utm_campaign=upsell&utm_medium=plugin&utm_source=plugin-extension-page&utm_content=hero-cta" class="button button-primary" target="_blank" rel="noreferrer noopener">View pricing</a>
 				</section>
 				<section class="upgrade-wrapper-features">
 					<h2>Our Most Popular Premium Features</h2>

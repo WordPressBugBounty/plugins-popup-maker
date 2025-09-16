@@ -16,9 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class PUM_Utils_Template {
 
 	/**
-	 * Get template search paths with priorities.
-	 *
-	 * @return array<int, string> Priority-indexed array of template directory paths
+	 * @return array
 	 */
 	public static function paths() {
 		$template_dir = apply_filters( 'pum_template_path', 'popup-maker' );
@@ -56,11 +54,11 @@ class PUM_Utils_Template {
 	 *
 	 * @access   public
 	 *
-	 * @param string|string[] $template_names Template name(s) to locate
-	 * @param bool            $load Whether to load the template immediately
-	 * @param bool            $use_require_once Whether to use require_once when loading
+	 * @param string|array $template_names
+	 * @param bool         $load
+	 * @param bool         $use_require_once
 	 *
-	 * @return string|false Path to located template file, or false if not found
+	 * @return string
 	 * @internal param string $template_path (default: '')
 	 * @internal param string $default_path (default: '')
 	 */
@@ -109,14 +107,13 @@ class PUM_Utils_Template {
 	 *
 	 * Popup_Maker::$DEBUG will prevent overrides in themes from taking priority.
 	 *
-	 * @param string      $slug Template slug
-	 * @param string|null $name Template name variation
-	 * @param bool        $load Whether to load the template immediately
+	 * @param mixed       $slug
+	 * @param string|bool $name (default: false)
+	 * @param bool        $load
 	 *
-	 * @return string|false Path to located template part, or false if not found
+	 * @return string
 	 */
 	public static function locate_part( $slug, $name = null, $load = false ) {
-		/** @var string[] $templates */
 		$templates = [];
 		if ( $name ) {
 			// slug-name.php
@@ -139,19 +136,18 @@ class PUM_Utils_Template {
 	/**
 	 * Render file with extracted arguments.
 	 *
-	 * @param string|false         $template Path to template file or false if not found
-	 * @param array<string, mixed> $args Variables to extract into template scope
-	 * @return void
+	 * @param       $template
+	 * @param array    $args
 	 */
 	public static function render( $template, $args = [] ) {
 
 		if ( ! $template || ! file_exists( $template ) ) {
-			_doing_it_wrong( __FUNCTION__, sprintf( '<code>%s</code> does not exist.', esc_html( $template ?: 'unknown' ) ), '1.0.0' );
+			_doing_it_wrong( __FUNCTION__, sprintf( '<code>%s</code> does not exist.', esc_html( $template ) ), '1.0.0' );
 
 			return;
 		}
 
-		if ( $args ) {
+		if ( $args && is_array( $args ) ) {
 			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 			extract( $args );
 		}
@@ -164,10 +160,9 @@ class PUM_Utils_Template {
 	 *
 	 * Allows passing arguments that will be globally accessible in the template.
 	 *
-	 * @param string               $slug Template slug
-	 * @param string|null          $name Template name variation
-	 * @param array<string, mixed> $args Variables to extract into template scope
-	 * @return void
+	 * @param string $slug
+	 * @param string $name
+	 * @param array  $args
 	 */
 	public static function part( $slug, $name = null, $args = [] ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -179,11 +174,11 @@ class PUM_Utils_Template {
 	 *
 	 * Allows passing arguments that will be globally accessible in the template.
 	 *
-	 * @param string               $slug Template slug
-	 * @param string|null          $name Template name variation
-	 * @param array<string, mixed> $args Variables to extract into template scope
+	 * @param string $slug
+	 * @param string $name
+	 * @param array  $args
 	 *
-	 * @return string Rendered template content (empty string if template not found)
+	 * @return string
 	 */
 	public static function get_part( $slug, $name = null, $args = [] ) {
 
@@ -196,23 +191,20 @@ class PUM_Utils_Template {
 		/* @deprecated 1.8.0 */
 		do_action( 'get_template_part_' . $slug, $slug, $name );
 
-		if ( $template ) {
-			self::render( $template, $args );
-		}
+		self::render( $template, $args );
 
 		do_action( 'pum_after_template_part', $template, $slug, $name, $args );
 
-		$content = ob_get_clean();
-		return false !== $content ? $content : '';
+		return ob_get_clean();
 	}
 
 	/**
 	 * Gets the rendered contents of the specified template file.
 	 *
-	 * @param string               $template_name Template file name to locate and render
-	 * @param array<string, mixed> $args Variables to extract into template scope
+	 * @param       $template_name
+	 * @param array         $args
 	 *
-	 * @return string Rendered template content (empty string if template not found)
+	 * @return string
 	 */
 	public static function get( $template_name, $args = [] ) {
 		$template = self::locate( $template_name );
@@ -224,14 +216,11 @@ class PUM_Utils_Template {
 
 		do_action( 'pum_before_template', $template_name, $template, $args );
 
-		if ( $template ) {
-			self::render( $template, $args );
-		}
+		self::render( $template, $args );
 
 		do_action( 'pum_after_template', $template_name, $template, $args );
 
-		$content = ob_get_clean();
-		return false !== $content ? $content : '';
+		return ob_get_clean();
 	}
 
 	/**
@@ -239,9 +228,8 @@ class PUM_Utils_Template {
 	 *
 	 * @deprecated  public
 	 *
-	 * @param string               $template_name Template file name with extension: file-name.php
-	 * @param array<string, mixed> $args Template variables (default: array())
-	 * @return void
+	 * @param string $template_name Template file name with extension: file-name.php
+	 * @param array  $args          (default: array())
 	 */
 	public static function load( $template_name, $args = [] ) {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

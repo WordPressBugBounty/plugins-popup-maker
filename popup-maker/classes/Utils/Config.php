@@ -16,10 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class PUM_Utils_Config {
 
 	/**
-	 * Load configuration file
+	 * Config
 	 *
-	 * @param string $file_name Configuration file name (without .php extension)
-	 * @return array<string, mixed> Configuration array or empty array if file not found
+	 * @param $file_name
+	 *
+	 * @return mixed
 	 */
 	public static function load( $file_name ) {
 

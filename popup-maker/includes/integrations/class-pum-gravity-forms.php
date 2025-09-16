@@ -266,20 +266,15 @@ class PUM_Gravity_Forms_Integation {
 		$form_id = rgget( 'id' );
 
 		if ( ! empty( $_POST['gforms-pum'] ) ) {
-			$settings = sanitize_textarea_field( wp_unslash( $_POST['gforms-pum'] ) );
+			$settings = sanitize_key( wp_unslash( $_POST['gforms-pum'] ) );
 
 			// Sanitize values.
-			$settings = json_decode( $settings, true );
+			$settings['openpopup']    = ! empty( $settings['openpopup'] );
+			$settings['openpopup_id'] = ! empty( $settings['openpopup_id'] ) ? absint( $settings['openpopup_id'] ) : 0;
+			$settings['closepopup']   = ! empty( $settings['closepopup'] );
+			$settings['closedelay']   = ! empty( $settings['closedelay'] ) ? absint( $settings['closedelay'] ) : 0;
 
-			// Check if JSON decode was successful.
-			if ( is_array( $settings ) ) {
-				$settings['openpopup']    = ! empty( $settings['openpopup'] );
-				$settings['openpopup_id'] = ! empty( $settings['openpopup_id'] ) ? absint( $settings['openpopup_id'] ) : 0;
-				$settings['closepopup']   = ! empty( $settings['closepopup'] );
-				$settings['closedelay']   = ! empty( $settings['closedelay'] ) ? absint( $settings['closedelay'] ) : 0;
-
-				update_option( 'gforms_pum_' . $form_id, $settings );
-			}
+			update_option( 'gforms_pum_' . $form_id, $settings );
 		} else {
 			delete_option( 'gforms_pum_' . $form_id );
 		}
