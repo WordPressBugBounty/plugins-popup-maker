@@ -1,19 +1,19 @@
 <?php
 /**
- * Integration for FluentForms
+ * Integration for Forminator
  *
  * @package   PopupMaker
- * @copyright Copyright (c) 2024, Code Atlantic LLC
+ * @copyright Copyright (c) 2025, Code Atlantic LLC
  */
 
-class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
+class PUM_Integration_Form_Forminator extends PUM_Abstract_Integration_Form {
 
 	/**
 	 * Unique key identifier for this provider.
 	 *
 	 * @var string
 	 */
-	public $key = 'fluentforms';
+	public $key = 'forminator';
 
 	/**
 	 * Only used to hook in a custom action for non AJAX based submissions.
@@ -21,7 +21,7 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	 * Could be used for other initiations as well where needed.
 	 */
 	public function __construct() {
-		add_action( 'fluentform/before_submission_confirmation', [ $this, 'on_success' ], 10, 3 );
+		add_action( 'forminator_custom_form_submit_before_set_fields', [ $this, 'on_success' ], 10, 3 );
 	}
 
 	/**
@@ -30,8 +30,8 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	 * @return string
 	 */
 	public function label() {
-		// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- Use Fluent Forms' own translations.
-		return __( 'Fluent Forms', 'fluentform' );
+		// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- Use Forminator's own translations.
+		return __( 'Forminator', 'forminator' );
 	}
 
 	/**
@@ -40,7 +40,7 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	 * @return bool
 	 */
 	public function enabled() {
-		return ( defined( 'FLUENTFORM_VERSION' ) && FLUENTFORM_VERSION );
+		return defined( 'FORMINATOR_VERSION' );
 	}
 
 	/**
@@ -49,22 +49,48 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	 * @return array<object{id:int,title:string}>
 	 */
 	public function get_forms() {
-		$form_query = fluentFormApi( 'forms' )->forms([
-			'per_page' => 10000,
-		]);
+		if ( ! $this->enabled() || ! class_exists( 'Forminator_API' ) || ! method_exists( 'Forminator_API', 'get_forms' ) ) {
+			return [];
+		}
 
-		return $form_query['data'];
+		$forms = [];
+
+		$query = Forminator_API::get_forms( null, 1, 9999 );
+
+		if ( ! empty( $query ) && is_array( $query ) ) {
+			foreach ( $query as $form ) {
+				$forms[] = (object) [
+					'id'    => $form->id,
+					'title' => $form->name,
+				];
+			}
+		}
+
+		return $forms;
 	}
 
 	/**
 	 * Return a single form by ID.
 	 *
-	 * @param string $id
+	 * @param string $id Form ID.
 	 *
-	 * @return object{id:int,title:string}
+	 * @return object{id:int,title:string}|null
 	 */
 	public function get_form( $id ) {
-		return fluentFormApi( 'forms' )->find( $id );
+		if ( ! $this->enabled() || ! class_exists( 'Forminator_API' ) || ! method_exists( 'Forminator_API', 'get_form' ) ) {
+			return null;
+		}
+
+		$form = Forminator_API::get_form( absint( $id ) );
+
+		if ( ! $form ) {
+			return null;
+		}
+
+		return (object) [
+			'id'    => $form->id,
+			'title' => $form->name,
+		];
 	}
 
 	/**
@@ -76,8 +102,7 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	 */
 	public function get_form_selectlist() {
 		$form_selectlist = [];
-
-		$forms = $this->get_forms();
+		$forms           = $this->get_forms();
 
 		foreach ( $forms as $form ) {
 			$form_selectlist[ $form->id ] = $form->title;
@@ -87,27 +112,28 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	}
 
 	/**
-	 * Hooks in a success functions specific to this provider for non AJAX submission handling.
+	 * Hooks in a success function specific to this provider for non AJAX submission handling.
 	 *
-	 * @param string          $submission_id
-	 * @param array           $form_data
-	 * @param object|stdClass $form
+	 * @param object $entry    Form entry object.
+	 * @param int    $form_id  Form ID.
+	 * @param array  $field_data_array Field data array.
 	 */
-	public function on_success( $submission_id, $form_data, $form ) {
+	public function on_success( $entry, $form_id, $field_data_array ) {
 		if ( ! $this->should_process_submission() ) {
 			return;
 		}
+
+		// Defensive validation for third-party hook compatibility.
+		if ( ! is_numeric( $form_id ) || $form_id <= 0 ) {
+			return;
+		}
+
+		$form_id = absint( $form_id );
 
 		$popup_id = $this->get_popup_id();
 
 		if ( $popup_id ) {
 			$this->increase_conversion( $popup_id );
-		}
-
-		// Defensive validation - $form is stdClass, not array.
-		$form_id = null;
-		if ( is_object( $form ) && isset( $form->attributes ) && is_object( $form->attributes ) && isset( $form->attributes->id ) ) {
-			$form_id = $form->attributes->id;
 		}
 
 		pum_integrated_form_submission(
@@ -127,15 +153,12 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	public function get_popup_id() {
 		// There is no raw nonce passed with this endpoint, so we need to check the raw data.
 		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_POST['data'] ) ) {
+		if ( isset( $_POST['forminator-form-id'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$raw_data = sanitize_text_field( wp_unslash( $_POST['data'] ) );
+			$form_data = $_POST;
 
-			// Parse the URL-encoded string into an associative array
-			parse_str( $raw_data, $data );
-
-			if ( isset( $data['pum_form_popup_id'] ) ) {
-				return absint( $data['pum_form_popup_id'] );
+			if ( isset( $form_data['pum_form_popup_id'] ) ) {
+				return absint( $form_data['pum_form_popup_id'] );
 			}
 		}
 
@@ -145,7 +168,7 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	/**
 	 * Load a custom script file to handle AJAX based submissions or other integrations with Popup Maker frontend.
 	 *
-	 * @param array $js
+	 * @param array $js JavaScript files array.
 	 *
 	 * @return array
 	 */
@@ -156,7 +179,7 @@ class PUM_Integration_Form_FluentForms extends PUM_Abstract_Integration_Form {
 	/**
 	 * Load custom styles for hacking some elements specifically inside popups, such as datepickers.
 	 *
-	 * @param array $css
+	 * @param array $css CSS files array.
 	 *
 	 * @return array
 	 */
