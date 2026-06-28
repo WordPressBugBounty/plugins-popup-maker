@@ -5,9 +5,9 @@ Plugin URI: https://wppopupmaker.com/?utm_campaign=readme&utm_medium=referral&ut
 Donate link:
 Tags:  marketing, popup, popups, optin, conversion
 Requires at least: 6.7
-Tested up to: 6.9.0
+Tested up to: 7.0.0
 Requires PHP: 7.4
-Stable tag: 1.22.0
+Stable tag: 1.23.0
 License: GPLv2 or later
 License URI:  http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,13 +115,13 @@ Popup Maker integrates with all of the most popular form plugins to allow you to
 * [Mailchimp for WordPress](https://wppopupmaker.com/form-integrations/mailchimp-for-wordpress/) (MC4WP) - newsletter signup forms
 * [Formidable Forms](https://wppopupmaker.com/form-integrations/formidable-forms/) - advanced form builder with database views
 * [Forminator](https://wppopupmaker.com/form-integrations/forminator/) - free form builder by WPMU DEV
-* [Elementor Pro Forms](https://wppopupmaker.com/form-integrations/elementor-forms/) - native form builder for Elementor page builder
+* [Elementor Pro Forms](https://wppopupmaker.com/form-integrations/elementor-pro-forms/) - native form builder for Elementor page builder
 * [HappyForms](https://wppopupmaker.com/form-integrations/happyforms/) - free drag-and-drop form builder with live preview
 * [Kali Forms](https://wppopupmaker.com/form-integrations/kali-forms/) - Gutenberg-native form builder with block editor support
 * [Bit Form](https://wppopupmaker.com/form-integrations/bit-form/) - lightweight form builder with custom post type storage
 * [HTML Forms](https://wppopupmaker.com/form-integrations/html-forms/) - simple, lightweight form builder with no bloat
 * [Beaver Builder Forms](https://wppopupmaker.com/form-integrations/beaver-builder/) - contact, subscribe, and login forms for Beaver Builder page builder
-* [Newsletter](https://wppopupmaker.com/form-integrations/newsletter/) - thenewsletterplugin.com integration with AJAX submission support
+* [Newsletter](https://wppopupmaker.com/email-marketing-integrations/the-newsletter-plugin/) - thenewsletterplugin.com integration with AJAX submission support
 * and more!
 
 <h4>Email Marketing & CRM Integrations:</h4>
@@ -272,6 +272,33 @@ For the latest updates and release information:
 * Visit our [changelog](https://wppopupmaker.com/changelog/) for detailed version history
 * View our [complete development changelog](https://github.com/PopupMaker/Popup-Maker/blob/master/CHANGELOG.md)
 
+= 1.23.0 - 2026-06-28 =
+
+**Security**
+
+-   Tightened the permission checks required & improved validation for pro activation.
+-   Additional hardening based on continuous AI scanning.
+
+**Features**
+
+-   Added a "Preview Popup" option to the block editor's Preview menu, matching the classic editor. It opens the popup on the front end in a dedicated tab; clicking it again reuses that same tab, and saving the popup automatically refreshes the open preview so you always see your latest changes.
+-   Added "Disable URL tracking parameters" privacy setting. When enabled, popup links no longer get `?pid=` appended — link clicks are tracked via browser beacons instead (less reliable but non-invasive to URLs).
+
+**Improvements**
+
+-   The popup editor now remembers the last-open settings tab per popup instead of sharing a single tab across all popups, so each popup reopens to the tab you last used.
+
+**Fixes**
+
+-   Fixed the "Preview" button in the classic editor not opening popups — a regression introduced in 1.22.0. You can once again preview popups directly from the editor without having to save and view the live page, now reliably regardless of how quickly the page finishes loading. Thanks to @marklchaves for the fix.
+-   Fixed missing styles for Popup Maker blocks on the front end in some installs — blocks now render with the correct styling without a console warning about a missing stylesheet.
+-   Fixed "Disable popup open tracking" privacy setting now disables link tracking parameters appended and click beacon tracking.
+-   Fixed PHP bug in `pum_get_asset_group_meta()` where `(array) file_exists()` always evaluated as truthy, causing fatal errors when build artifacts were missing.
+-   Fixed condition dropdowns (such as "Categories", "Tags", and other taxonomy selectors) showing duplicate entries and hiding some terms when you had more than ten — every term is now listed once and reachable as you scroll.
+-   Fixed popups taller than the browser window having their top cut off above the screen, which made the start of the content and the close button impossible to reach. Tall popups now keep their top edge in view.
+-   Fixed an invalid "Extra Selectors" value on a Click Open trigger breaking all popup triggers on the page. A malformed selector is now skipped (with a console notice) instead of stopping every trigger from working.
+-   Fixed ACF (Advanced Custom Fields) shortcodes not displaying their values inside popups since ACF 6.3.4, which stopped resolving `[acf]` shortcodes on non-public content. ACF shortcodes now render in popup content again.
+
 = 1.22.0 - 2026-03-31 =
 
 **Features**
@@ -279,7 +306,7 @@ For the latest updates and release information:
 -   Added link click conversion tracking for external and special links (mailto:, tel:, etc.) within popups. Clicks are tracked via analytics beacon and categorized by link type for conversion reporting.
 -   Added [Beaver Builder Forms integration](https://wppopupmaker.com/form-integrations/beaver-builder/) for form submission tracking and conversion analytics. Supports Contact, Subscribe, and Login form modules.
 -   Added [Bit Form integration](https://wppopupmaker.com/form-integrations/bit-form/) for form submission tracking and conversion analytics.
--   Added [Elementor Pro Forms integration](https://wppopupmaker.com/form-integrations/elementor-forms/) for form submission tracking and conversion analytics with support for targeting specific forms.
+-   Added [Elementor Pro Forms integration](https://wppopupmaker.com/form-integrations/elementor-pro-forms/) for form submission tracking and conversion analytics with support for targeting specific forms.
 -   Added [Forminator integration](https://wppopupmaker.com/form-integrations/forminator/) for form submission tracking and conversion analytics.
 -   Added [HappyForms integration](https://wppopupmaker.com/form-integrations/happyforms/) for form submission tracking and conversion analytics.
 -   Added [HTML Forms integration](https://wppopupmaker.com/form-integrations/html-forms/) for lightweight form submission tracking and conversion analytics.

@@ -2,9 +2,9 @@
   'root' => 
   array (
     'name' => 'popupmaker/popup-maker',
-    'pretty_version' => '1.22.0',
-    'version' => '1.22.0.0',
-    'reference' => '238daf2b36bdb497140d2866610edd2b2814b2fa',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
+    'reference' => '302e91653ce9017d7b49117e02df20cd101459ae',
     'type' => 'wordpress-plugin',
     'install_path' => __DIR__ . '/../',
     'aliases' => 
