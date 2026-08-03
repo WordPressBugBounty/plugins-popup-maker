@@ -4,7 +4,7 @@
 
 namespace PopupMaker\Vendor\Composer\Autoload;
 
-class ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127
+class ComposerStaticInit6383157378f62d92a88185eaa66e9b0e
 {
     public static $prefixLengthsPsr4 = array (
         'P' => 
@@ -67,6 +67,7 @@ class ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127
         'PopupMaker\\Controllers\\Compatibility\\Backcompat\\Filters' => __DIR__ . '/../..' . '/classes/Controllers/Compatibility/Backcompat/Filters.php',
         'PopupMaker\\Controllers\\Compatibility\\Builder\\Divi' => __DIR__ . '/../..' . '/classes/Controllers/Compatibility/Builder/Divi.php',
         'PopupMaker\\Controllers\\Compatibility\\Plugin\\ACF' => __DIR__ . '/../..' . '/classes/Controllers/Compatibility/Plugin/ACF.php',
+        'PopupMaker\\Controllers\\Compatibility\\Plugin\\PostDuplication' => __DIR__ . '/../..' . '/classes/Controllers/Compatibility/Plugin/PostDuplication.php',
         'PopupMaker\\Controllers\\Compatibility\\SEO\\Yoast' => __DIR__ . '/../..' . '/classes/Controllers/Compatibility/SEO/Yoast.php',
         'PopupMaker\\Controllers\\Debug' => __DIR__ . '/../..' . '/classes/Controllers/Debug.php',
         'PopupMaker\\Controllers\\Frontend' => __DIR__ . '/../..' . '/classes/Controllers/Frontend.php',
@@ -78,9 +79,6 @@ class ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127
         'PopupMaker\\Controllers\\WP\\Blocks' => __DIR__ . '/../..' . '/classes/Controllers/WP/Blocks.php',
         'PopupMaker\\Controllers\\WP\\Dashboard' => __DIR__ . '/../..' . '/classes/Controllers/WP/Dashboard.php',
         'PopupMaker\\Controllers\\WP\\I18n' => __DIR__ . '/../..' . '/classes/Controllers/WP/I18n.php',
-        'PopupMaker\\Installers\\Install_Skin' => __DIR__ . '/../..' . '/classes/Installers/Install_Skin.php',
-        'PopupMaker\\Installers\\PluginSilentUpgrader' => __DIR__ . '/../..' . '/classes/Installers/PluginSilentUpgrader.php',
-        'PopupMaker\\Installers\\PluginSilentUpgraderSkin' => __DIR__ . '/../..' . '/classes/Installers/PluginSilentUpgraderSkin.php',
         'PopupMaker\\Integration\\QueryMonitor\\Collector\\CacheFunc' => __DIR__ . '/../..' . '/classes/Integration/QueryMonitor/Collector/CacheFunc.php',
         'PopupMaker\\Integration\\QueryMonitor\\Output\\Html\\CacheFunc' => __DIR__ . '/../..' . '/classes/Integration/QueryMonitor/Output/Html/CacheFunc.php',
         'PopupMaker\\Interfaces\\CallToAction' => __DIR__ . '/../..' . '/classes/Interfaces/CallToAction.php',
@@ -92,12 +90,13 @@ class ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127
         'PopupMaker\\Plugin\\Controller' => __DIR__ . '/../..' . '/classes/Plugin/Controller.php',
         'PopupMaker\\Plugin\\Core' => __DIR__ . '/../..' . '/classes/Plugin/Core.php',
         'PopupMaker\\Plugin\\Extension' => __DIR__ . '/../..' . '/classes/Plugin/Extension.php',
-        'PopupMaker\\RestAPI\\Connect' => __DIR__ . '/../..' . '/classes/RestAPI/Connect.php',
+        'PopupMaker\\RestAPI\\Addons' => __DIR__ . '/../..' . '/classes/RestAPI/Addons.php',
         'PopupMaker\\RestAPI\\License' => __DIR__ . '/../..' . '/classes/RestAPI/License.php',
         'PopupMaker\\RestAPI\\Notifications' => __DIR__ . '/../..' . '/classes/RestAPI/Notifications.php',
         'PopupMaker\\RestAPI\\ObjectSearch' => __DIR__ . '/../..' . '/classes/RestAPI/ObjectSearch.php',
+        'PopupMaker\\Services\\AddonCatalog' => __DIR__ . '/../..' . '/classes/Services/AddonCatalog.php',
+        'PopupMaker\\Services\\AddonLifecycle' => __DIR__ . '/../..' . '/classes/Services/AddonLifecycle.php',
         'PopupMaker\\Services\\Collector\\CallToActionTypes' => __DIR__ . '/../..' . '/classes/Services/Collector/CallToActionTypes.php',
-        'PopupMaker\\Services\\Connect' => __DIR__ . '/../..' . '/classes/Services/Connect.php',
         'PopupMaker\\Services\\FormConversionTracking' => __DIR__ . '/../..' . '/classes/Services/FormConversionTracking.php',
         'PopupMaker\\Services\\Globals' => __DIR__ . '/../..' . '/classes/Services/Globals.php',
         'PopupMaker\\Services\\License' => __DIR__ . '/../..' . '/classes/Services/License.php',
@@ -111,7 +110,6 @@ class ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127
         'PopupMaker\\Services\\Repository\\CallToActions' => __DIR__ . '/../..' . '/classes/Services/Repository/CallToActions.php',
         'PopupMaker\\Services\\Repository\\Popups' => __DIR__ . '/../..' . '/classes/Services/Repository/Popups.php',
         'PopupMaker\\Services\\UpgradeStream' => __DIR__ . '/../..' . '/classes/Services/UpgradeStream.php',
-        'PopupMaker\\Services\\Upgrader' => __DIR__ . '/../..' . '/classes/Services/Upgrader.php',
         'PopupMaker\\Vendor\\CodeAtlantic\\Autoloader\\Autoloader' => __DIR__ . '/..' . '/code-atlantic/wp-autoloader/src/Autoloader.php',
         'PopupMaker\\Vendor\\CodeAtlantic\\PrerequisiteChecks\\Prerequisites' => __DIR__ . '/..' . '/code-atlantic/prerequisite-checks/src/Prerequisites.php',
         'PopupMaker\\Vendor\\Pimple\\Container' => __DIR__ . '/..' . '/pimple/pimple/src/Pimple/Container.php',
@@ -140,10 +138,10 @@ class ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitad2e9eae8b2b4c78e6566576e7c4c127::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6383157378f62d92a88185eaa66e9b0e::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6383157378f62d92a88185eaa66e9b0e::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit6383157378f62d92a88185eaa66e9b0e::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit6383157378f62d92a88185eaa66e9b0e::$classMap;
 
         }, null, ClassLoader::class);
     }
